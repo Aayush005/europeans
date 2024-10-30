@@ -1,0 +1,2743 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Europeans Dynasty MCQ Quiz</title>
+    <style>
+        /* Reset some default styles */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f0f8ff, #e6f7ff);
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* Accommodate fixed elements */
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* Timer Styling */
+        .timer {
+            position: fixed;          /* Fixes the position relative to the viewport */
+            top: 20px;                /* Positions 20px from the top */
+            right: 20px;              /* Positions 20px from the right */
+            font-size: 1.5rem;        /* Sets a readable font size */
+            color: #d9534f;           /* Sets the text color (red) */
+            font-weight: bold;        /* Makes the text bold */
+            z-index: 1000;            /* Ensures the timer stays above other elements */
+            background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent background */
+            padding: 10px 15px;       /* Adds padding around the timer text */
+            border-radius: 5px;       /* Rounds the corners of the timer box */
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Adds a subtle shadow for depth */
+        }
+
+        /* Question Map Sidebar Styling */
+        .question-map {
+            position: fixed;          
+            top: 80px;                /* Positioned below the timer */
+            right: 20px;               /* Positioned on the right */
+            width: 180px;              /* Increased width to accommodate 5 columns */
+            background-color: rgba(255, 255, 255, 0.9); 
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            z-index: 999;             
+            max-height: 90vh;         
+            overflow-y: auto;         
+        }
+
+        .question-map h2 {
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+            color: #007bff;
+        }
+
+        /* Update #questionLinks to Use CSS Grid */
+        #questionLinks {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            grid-gap: 5px; /* Adjust the spacing between links as needed */
+            justify-items: center; /* Centers the links within each grid cell */
+        }
+
+        /* Adjust .question-map .question-link Styling */
+        .question-map .question-link {
+            padding: 5px 0; /* Reduces vertical padding */
+            font-size: 0.9rem; /* Slightly smaller font size for better fit */
+            width: 100%; /* Ensures the link takes the full width of the grid cell */
+            box-sizing: border-box; /* Includes padding and border in the element's total width and height */
+            border-radius: 4px; /* Maintains rounded corners */
+            text-align: center; /* Centers the text within the link */
+            background-color: #f8f9fa;
+            color: #007bff;
+            text-decoration: none;
+            border: 1px solid #007bff;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .question-map .question-link:hover {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        /* Add Correct and Incorrect Classes for Highlighting */
+        .question-map .question-link.correct {
+            background-color: #28a745; /* Green background */
+            color: #fff; /* White text */
+            border-color: #28a745; /* Green border */
+        }
+
+        .question-map .question-link.incorrect {
+            background-color: #dc3545; /* Red background */
+            color: #fff; /* White text */
+            border-color: #dc3545; /* Red border */
+        }
+
+        /* Add Attempted Class for Highlighting */
+        .question-map .question-link.attempted {
+            background-color: #17a2b8; /* Blue background for attempted questions */
+            color: #fff; /* White text */
+            border-color: #17a2b8; /* Blue border */
+        }
+
+        /* Submit Button and Score Styling */
+        .question-map .submit-section {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .question-map .submit-btn {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s;
+            margin-bottom: 10px;
+        }
+
+        .question-map .submit-btn:hover {
+            background-color: #218838;
+        }
+
+        .question-map .submit-btn:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+        }
+
+        .question-map .result {
+            font-size: 1rem;
+            font-weight: bold;
+            color: #17a2b8;
+        }
+
+        /* Smooth Scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Quiz Container Styling */
+        .quiz-container {
+            background-color: #fff;
+            padding: 30px 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            max-width: 800px;
+            width: 100%;
+            margin-right: 200px; /* Accommodates the question map sidebar on the right */
+            margin-top: 50px;     /* Maintains spacing from the top */
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #007bff;
+        }
+
+        .question {
+            margin-bottom: 25px;
+        }
+
+        .question p {
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+
+        .options label {
+            display: block;
+            margin-bottom: 8px;
+            padding: 10px 15px;
+            border: 2px solid #007bff;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .options input[type="radio"] {
+            display: none;
+        }
+
+        .options input[type="radio"]:checked + label {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        .options label:hover {
+            background-color: #e6f0ff;
+        }
+
+        .submit-btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: background-color 0.3s;
+            margin-top: 20px;
+        }
+
+        .submit-btn:hover {
+            background-color: #218838;
+        }
+
+        .submit-btn:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+        }
+
+        .result {
+            margin-top: 30px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            text-align: center;
+            color: #17a2b8;
+        }
+
+        /* Feedback Message Styling */
+        .feedback {
+            margin-top: 10px;
+            font-weight: bold;
+            font-size: 1rem;
+        }
+
+        .feedback.right {
+            color: #28a745; /* Green for correct answers */
+        }
+
+        .feedback.wrong {
+            color: #dc3545; /* Red for incorrect answers */
+        }
+
+        .feedback.not-attempted {
+            color: #6c757d; /* Gray for not attempted */
+        }
+
+        /* Alert when time is low */
+        .alert {
+            animation: blink 1s steps(5, start) infinite;
+        }
+
+        @keyframes blink {
+            to {
+                visibility: hidden;
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .quiz-container {
+                margin-right: 0; /* Removes right margin on small screens */
+            }
+
+            .question-map {
+                display: none; /* Hides the question map on small screens */
+            }
+
+            .toggle-question-map {
+                display: block; /* Shows toggle button on small screens */
+            }
+        }
+
+        /* Toggle Button for Question Map (Visible on Small Screens) */
+        .toggle-question-map {
+            position: fixed;
+            top: 20px;
+            right: 20px; /* Positioned on the right */
+            z-index: 1001;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            display: none; /* Hidden by default */
+        }
+
+        /* Active State for Question Map on Small Screens */
+        .question-map.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <!-- Timer Display -->
+    <div class="timer" id="timer">10:00</div>
+
+    <!-- Toggle Button for Question Map (Visible on Small Screens) -->
+    <button class="toggle-question-map" id="toggleQuestionMap">☰</button>
+
+    <!-- Question Map Sidebar -->
+    <div class="question-map" id="questionMap">
+        <h2>Question Map</h2>
+        <div id="questionLinks">
+            <!-- Question links will be injected here by JavaScript -->
+        </div>
+        <!-- Submit Button and Score Display Below the Question Links -->
+        <div class="submit-section">
+            <button type="button" class="submit-btn" id="submitBtn" onclick="checkAnswers()">Submit</button>
+            <div id="result" class="result"></div>
+        </div>
+    </div>
+
+    <div class="quiz-container">
+        <h1>Europeans Dynasty MCQ Quiz</h1>
+        
+        <form id="quizForm">
+            <!-- Questions will be injected here by JavaScript -->
+        </form>
+
+        <!-- Submit Button and Score Display Below the Questions List -->
+        <div class="submit-section">
+            <button type="button" class="submit-btn" id="submitBtnBelow" onclick="checkAnswers()">Submit</button>
+            <div id="resultBelow" class="result"></div>
+        </div>
+    </div>
+
+    <script>
+        // Declare shuffledQuestions globally
+        let shuffledQuestions = [];
+
+        // Replace the following array with your own questions
+        const questions = [
+  // Q1
+  {
+    id: 'q1',
+    question: 'Who discovered America while searching for a sea route to India in 1492?',
+    options: [
+      { text: 'Vasco da Gama', isCorrect: false },
+      { text: 'Christopher Columbus', isCorrect: true },
+      { text: 'Pedro Álvares Cabral', isCorrect: false },
+      { text: 'Ferdinand Magellan', isCorrect: false }
+    ]
+  },
+  // Q2
+  {
+    id: 'q2',
+    question: '1498 AD marks the discovery of the sea route to India by which explorer?',
+    options: [
+      { text: 'Alfonso de Albuquerque', isCorrect: false },
+      { text: 'Sir Thomas Roe', isCorrect: false },
+      { text: 'Vasco da Gama', isCorrect: true },
+      { text: 'William Hawkins', isCorrect: false }
+    ]
+  },
+  // Q3
+  {
+    id: 'q3',
+    question: 'Who granted the British East India Company a trade monopoly in 1600 AD?',
+    options: [
+      { text: 'King James I', isCorrect: false },
+      { text: 'Queen Elizabeth I', isCorrect: true },
+      { text: 'King Charles II', isCorrect: false },
+      { text: 'King Henry VIII', isCorrect: false }
+    ]
+  },
+  // Q4
+  {
+    id: 'q4',
+    question: 'Surat was the first permanent factory established by which European power?',
+    options: [
+      { text: 'Portuguese', isCorrect: false },
+      { text: 'Dutch', isCorrect: false },
+      { text: 'British', isCorrect: true },
+      { text: 'French', isCorrect: false }
+    ]
+  },
+  // Q5
+  {
+    id: 'q5',
+    question: 'Which company was renamed to the British East India Company in 1833?',
+    options: [
+      { text: 'Governor and Company of Merchants of London', isCorrect: true },
+      { text: 'Dutch East India Company', isCorrect: false },
+      { text: 'French East India Company', isCorrect: false },
+      { text: 'Portuguese East India Company', isCorrect: false }
+    ]
+  },
+  // Q6
+  {
+    id: 'q6',
+    question: 'Alfonso de Albuquerque is known for capturing which Indian city in 1510?',
+    options: [
+      { text: 'Cochin', isCorrect: false },
+      { text: 'Goa', isCorrect: true },
+      { text: 'Surat', isCorrect: false },
+      { text: 'Calicut', isCorrect: false }
+    ]
+  },
+  // Q7
+  {
+    id: 'q7',
+    question: 'What was established in Goa in 1556 AD by the Portuguese?',
+    options: [
+      { text: 'First church', isCorrect: false },
+      { text: 'First factory', isCorrect: false },
+      { text: 'First printing press', isCorrect: true },
+      { text: 'First university', isCorrect: false }
+    ]
+  },
+  // Q8
+  {
+    id: 'q8',
+    question: 'Who was the first Portuguese Viceroy in India?',
+    options: [
+      { text: 'Vasco da Gama', isCorrect: false },
+      { text: 'Francisco de Almeida', isCorrect: true },
+      { text: 'Pedro Álvares Cabral', isCorrect: false },
+      { text: 'Alfonso de Albuquerque', isCorrect: false }
+    ]
+  },
+  // Q9
+  {
+    id: 'q9',
+    question: 'Which European power established the first trading house in Surat in 1668 AD?',
+    options: [
+      { text: 'British', isCorrect: false },
+      { text: 'Dutch', isCorrect: false },
+      { text: 'French', isCorrect: true },
+      { text: 'Swedish', isCorrect: false }
+    ]
+  },
+  // Q10
+  {
+    id: 'q10',
+    question: 'Bombay was given to Charles II of England as dowry by which European power?',
+    options: [
+      { text: 'Dutch', isCorrect: false },
+      { text: 'French', isCorrect: false },
+      { text: 'Portuguese', isCorrect: true },
+      { text: 'Spanish', isCorrect: false }
+    ]
+  },
+  // Q11
+  {
+    id: 'q11',
+    question: 'Who served as the Governor of Bombay from 1669 to 1677 AD?',
+    options: [
+      { text: 'Gerald Aungier', isCorrect: true },
+      { text: 'Sir Thomas Roe', isCorrect: false },
+      { text: 'Governor Dupleix', isCorrect: false },
+      { text: 'William Hawkins', isCorrect: false }
+    ]
+  },
+  // Q12
+  {
+    id: 'q12',
+    question: 'Which company was established by Louis XIV\'s minister Colbert in 1664 AD?',
+    options: [
+      { text: 'British East India Company', isCorrect: false },
+      { text: 'Dutch East India Company', isCorrect: false },
+      { text: 'French East India Company', isCorrect: true },
+      { text: 'Portuguese East India Company', isCorrect: false }
+    ]
+  },
+  // Q13
+  {
+    id: 'q13',
+    question: 'Puducherry became the French headquarters in India in which year?',
+    options: [
+      { text: '1668 AD', isCorrect: false },
+      { text: '1701 AD', isCorrect: true },
+      { text: '1731 AD', isCorrect: false },
+      { text: '1756 AD', isCorrect: false }
+    ]
+  },
+  // Q14
+  {
+    id: 'q14',
+    question: 'Which European power first reached Madagascar?',
+    options: [
+      { text: 'British', isCorrect: false },
+      { text: 'Dutch', isCorrect: false },
+      { text: 'French', isCorrect: true },
+      { text: 'Portuguese', isCorrect: false }
+    ]
+  },
+  // Q15
+  {
+    id: 'q15',
+    question: 'In which year did the Dutch East India Company establish their presence in India?',
+    options: [
+      { text: '1498 AD', isCorrect: false },
+      { text: '1602 AD', isCorrect: true },
+      { text: '1664 AD', isCorrect: false },
+      { text: '1731 AD', isCorrect: false }
+    ]
+  },
+  // Q16
+  {
+    id: 'q16',
+    question: 'Which practice did the Portuguese attempt to ban in 1515 AD?',
+    options: [
+      { text: 'Sati', isCorrect: true },
+      { text: 'Child marriage', isCorrect: false },
+      { text: 'Idol worship', isCorrect: false },
+      { text: 'Slavery', isCorrect: false }
+    ]
+  },
+  // Q17
+  {
+    id: 'q17',
+    question: 'Which new crops were introduced to India by the Portuguese from America?',
+    options: [
+      { text: 'Rice and wheat', isCorrect: false },
+      { text: 'Tobacco and potatoes', isCorrect: true },
+      { text: 'Tea and coffee', isCorrect: false },
+      { text: 'Cotton and sugar', isCorrect: false }
+    ]
+  },
+  // Q18
+  {
+    id: 'q18',
+    question: 'Who was the British ambassador that reached Jahangir\'s court in 1615?',
+    options: [
+      { text: 'William Hawkins', isCorrect: false },
+      { text: 'Sir Thomas Roe', isCorrect: true },
+      { text: 'Gerald Aungier', isCorrect: false },
+      { text: 'Ralph Fitch', isCorrect: false }
+    ]
+  },
+  // Q19
+  {
+    id: 'q19',
+    question: 'Which Mughal Emperor permitted the British to establish a permanent factory in Surat in 1613?',
+    options: [
+      { text: 'Akbar', isCorrect: false },
+      { text: 'Jahangir', isCorrect: true },
+      { text: 'Shah Jahan', isCorrect: false },
+      { text: 'Aurangzeb', isCorrect: false }
+    ]
+  },
+  // Q20
+  {
+    id: 'q20',
+    question: 'Which year marks the establishment of the Swedish presence in India?',
+    options: [
+      { text: '1600 AD', isCorrect: false },
+      { text: '1664 AD', isCorrect: false },
+      { text: '1731 AD', isCorrect: true },
+      { text: '1756 AD', isCorrect: false }
+    ]
+  },
+  // Q21
+  {
+    id: 'q21',
+    question: 'Which European power established their first factory in Kannur in 1505 AD?',
+    options: [
+      { text: 'British', isCorrect: false },
+      { text: 'Dutch', isCorrect: false },
+      { text: 'French', isCorrect: false },
+      { text: 'Portuguese', isCorrect: true }
+    ]
+  },
+  // Q22
+  {
+    id: 'q22',
+    question: 'Which church was the first to be built in Goa in 1515 AD?',
+    options: [
+      { text: 'St. Paul\'s Church', isCorrect: false },
+      { text: 'St. Francis Church', isCorrect: false },
+      { text: 'St. Xavier\'s Church', isCorrect: true },
+      { text: 'St. Mary\'s Church', isCorrect: false }
+    ]
+  },
+  // Q23
+  {
+    id: 'q23',
+    question: 'Which European company\'s establishment year is 1664 AD?',
+    options: [
+      { text: 'Portuguese East India Company', isCorrect: false },
+      { text: 'British East India Company', isCorrect: false },
+      { text: 'Dutch East India Company', isCorrect: false },
+      { text: 'French East India Company', isCorrect: true }
+    ]
+  },
+  // Q24
+  {
+    id: 'q24',
+    question: 'Which European power established the second factory in Masulipatnam in 1669 AD?',
+    options: [
+      { text: 'British', isCorrect: false },
+      { text: 'Dutch', isCorrect: false },
+      { text: 'French', isCorrect: true },
+      { text: 'Swedish', isCorrect: false }
+    ]
+  },
+  // Q25
+  {
+    id: 'q25',
+    question: 'What policy did Francisco de Almeida adopt as the first Portuguese Viceroy?',
+    options: [
+      { text: 'Red Sea Policy', isCorrect: false },
+      { text: 'Blue Water Policy', isCorrect: true },
+      { text: 'Green Trade Policy', isCorrect: false },
+      { text: 'Golden Route Policy', isCorrect: false }
+    ]
+  },
+  // Q26
+  {
+    id: 'q26',
+    question: 'Which European power established a trading house in Sutanati, Calcutta in 1690 AD?',
+    options: [
+      { text: 'British', isCorrect: true },
+      { text: 'Dutch', isCorrect: false },
+      { text: 'French', isCorrect: false },
+      { text: 'Portuguese', isCorrect: false }
+    ]
+  },
+  // Q27
+  {
+    id: 'q27',
+    question: 'Who was the first English traveler to arrive at Jahangir\'s court in 1608 AD?',
+    options: [
+      { text: 'John Milden Hall', isCorrect: false },
+      { text: 'William Hawkins', isCorrect: true },
+      { text: 'Sir Thomas Roe', isCorrect: false },
+      { text: 'Ralph Fitch', isCorrect: false }
+    ]
+  },
+  // Q28
+  {
+    id: 'q28',
+    question: 'Which war series resulted in British dominance over the French in South India?',
+    options: [
+      { text: 'Anglo-Mysore Wars', isCorrect: false },
+      { text: 'Carnatic Wars', isCorrect: true },
+      { text: 'Anglo-Maratha Wars', isCorrect: false },
+      { text: 'First War of Independence', isCorrect: false }
+    ]
+  },
+  // Q29
+  {
+    id: 'q29',
+    question: 'Which European power was granted Bombay as dowry in 1661 AD?',
+    options: [
+      { text: 'Dutch', isCorrect: false },
+      { text: 'French', isCorrect: false },
+      { text: 'British', isCorrect: true },
+      { text: 'Swedish', isCorrect: false }
+    ]
+  },
+  // Q30
+  {
+    id: 'q30',
+    question: 'Which Mughal Emperor did Captain Hawkins meet in Agra in 1608 AD?',
+    options: [
+      { text: 'Akbar', isCorrect: false },
+      { text: 'Jahangir', isCorrect: true },
+      { text: 'Shah Jahan', isCorrect: false },
+      { text: 'Aurangzeb', isCorrect: false }
+    ]
+  },
+  // Q31
+  {
+    id: 'q31',
+    question: 'Which company was established in 1600 AD with a 15-year trade monopoly?',
+    options: [
+      { text: 'Dutch East India Company', isCorrect: false },
+      { text: 'British East India Company', isCorrect: true },
+      { text: 'French East India Company', isCorrect: false },
+      { text: 'Portuguese East India Company', isCorrect: false }
+    ]
+  },
+  // Q32
+  {
+    id: 'q32',
+    question: 'Which European power established their first trading house in Calicut?',
+    options: [
+      { text: 'Portuguese', isCorrect: true },
+      { text: 'British', isCorrect: false },
+      { text: 'Dutch', isCorrect: false },
+      { text: 'French', isCorrect: false }
+    ]
+  },
+  // Q33
+  {
+    id: 'q33',
+    question: 'Which year did Pedro Álvares Cabral reach India?',
+    options: [
+      { text: '1498 AD', isCorrect: false },
+      { text: '1500 AD', isCorrect: true },
+      { text: '1503 AD', isCorrect: false },
+      { text: '1505 AD', isCorrect: false }
+    ]
+  },
+  // Q34
+  {
+    id: 'q34',
+    question: 'Which European governor is known as the best French governor during the Carnatic Wars?',
+    options: [
+      { text: 'Gerald Aungier', isCorrect: false },
+      { text: 'Sir Thomas Roe', isCorrect: false },
+      { text: 'Governor Dupleix', isCorrect: true },
+      { text: 'William Hawkins', isCorrect: false }
+    ]
+  },
+  // Q35
+  {
+    id: 'q35',
+    question: 'Which European power established their first factory in Cochin in 1503 AD?',
+    options: [
+      { text: 'British', isCorrect: false },
+      { text: 'Dutch', isCorrect: false },
+      { text: 'French', isCorrect: false },
+      { text: 'Portuguese', isCorrect: true }
+    ]
+  },
+  // Q36
+  {
+    id: 'q36',
+    question: 'Which European power attempted to ban the Sati practice in 1515 AD?',
+    options: [
+      { text: 'British', isCorrect: false },
+      { text: 'Dutch', isCorrect: false },
+      { text: 'French', isCorrect: false },
+      { text: 'Portuguese', isCorrect: true }
+    ]
+  },
+  // Q37
+  {
+    id: 'q37',
+    question: 'Which Mughal Emperor did Sir Thomas Roe serve as ambassador to?',
+    options: [
+      { text: 'Akbar', isCorrect: false },
+      { text: 'Jahangir', isCorrect: true },
+      { text: 'Shah Jahan', isCorrect: false },
+      { text: 'Aurangzeb', isCorrect: false }
+    ]
+  },
+  // Q38
+  {
+    id: 'q38',
+    question: 'Which European power established their presence in Kannur in 1505 AD?',
+    options: [
+      { text: 'British', isCorrect: false },
+      { text: 'Dutch', isCorrect: false },
+      { text: 'French', isCorrect: false },
+      { text: 'Portuguese', isCorrect: true }
+    ]
+  },
+  // Q39
+  {
+    id: 'q39',
+    question: 'Which European company was established first?',
+    options: [
+      { text: 'Dutch East India Company', isCorrect: false },
+      { text: 'French East India Company', isCorrect: false },
+      { text: 'British East India Company', isCorrect: false },
+      { text: 'Portuguese East India Company', isCorrect: true }
+    ]
+  },
+  // Q40
+  {
+    id: 'q40',
+    question: 'Which printing press was the first to be established in India?',
+    options: [
+      { text: 'Surat', isCorrect: false },
+      { text: 'Calicut', isCorrect: false },
+      { text: 'Cochin', isCorrect: false },
+      { text: 'Goa', isCorrect: true }
+    ]
+  },
+  // Q41
+  {
+    id: 'q41',
+    question: 'Which island was the first trading post established by the French?',
+    options: [
+      { text: 'Bombay', isCorrect: false },
+      { text: 'Puducherry', isCorrect: false },
+      { text: 'Madagascar', isCorrect: true },
+      { text: 'Sutanati', isCorrect: false }
+    ]
+  },
+  // Q42
+  {
+    id: 'q42',
+    question: 'Which European power established their presence in India in 1731 AD?',
+    options: [
+      { text: 'British', isCorrect: false },
+      { text: 'Dutch', isCorrect: false },
+      { text: 'French', isCorrect: false },
+      { text: 'Swedish', isCorrect: true }
+    ]
+  },
+  // Q43
+  {
+    id: 'q43',
+    question: 'Which European company focused on controlling the spice trade in India?',
+    options: [
+      { text: 'British East India Company', isCorrect: false },
+      { text: 'Dutch East India Company', isCorrect: true },
+      { text: 'French East India Company', isCorrect: false },
+      { text: 'Portuguese East India Company', isCorrect: false }
+    ]
+  },
+  // Q44
+  {
+    id: 'q44',
+    question: 'Which city became the British capital in India after establishing a trading house in 1690 AD?',
+    options: [
+      { text: 'Bombay', isCorrect: false },
+      { text: 'Calicut', isCorrect: false },
+      { text: 'Surat', isCorrect: false },
+      { text: 'Calcutta', isCorrect: true }
+    ]
+  },
+  // Q45
+  {
+    id: 'q45',
+    question: 'Who was the second Portuguese explorer to reach India in 1500 AD?',
+    options: [
+      { text: 'Vasco da Gama', isCorrect: false },
+      { text: 'Alfonso de Albuquerque', isCorrect: false },
+      { text: 'Pedro Álvares Cabral', isCorrect: true },
+      { text: 'Francisco de Almeida', isCorrect: false }
+    ]
+  },
+  // Q46
+  {
+    id: 'q46',
+    question: 'Which year did the French establish the second factory in Masulipatnam?',
+    options: [
+      { text: '1664 AD', isCorrect: false },
+      { text: '1668 AD', isCorrect: false },
+      { text: '1669 AD', isCorrect: true },
+      { text: '1701 AD', isCorrect: false }
+    ]
+  },
+  // Q47
+  {
+    id: 'q47',
+    question: 'Which European governor established Bombay as a key British settlement?',
+    options: [
+      { text: 'Sir Thomas Roe', isCorrect: false },
+      { text: 'William Hawkins', isCorrect: false },
+      { text: 'Gerald Aungier', isCorrect: true },
+      { text: 'Governor Dupleix', isCorrect: false }
+    ]
+  },
+  // Q48
+  {
+    id: 'q48',
+    question: 'Which European power established their first factory in Masulipatnam in 1611 AD?',
+    options: [
+      { text: 'British', isCorrect: true },
+      { text: 'Dutch', isCorrect: false },
+      { text: 'French', isCorrect: false },
+      { text: 'Portuguese', isCorrect: false }
+    ]
+  },
+  // Q49
+  {
+    id: 'q49',
+    question: 'Which European power introduced the printing press to India?',
+    options: [
+      { text: 'British', isCorrect: false },
+      { text: 'Dutch', isCorrect: false },
+      { text: 'French', isCorrect: false },
+      { text: 'Portuguese', isCorrect: true }
+    ]
+  },
+  // Q50
+  {
+    id: 'q50',
+    question: 'Which European power was formally headquartered in Puducherry in 1701 AD?',
+    options: [
+      { text: 'British', isCorrect: false },
+      { text: 'Dutch', isCorrect: false },
+      { text: 'French', isCorrect: true },
+      { text: 'Portuguese', isCorrect: false }
+    ]
+  },
+  // Q51
+  {
+    id: 'q51',
+    question: 'Which year did Queen Elizabeth I grant a trade monopoly to the British East India Company?',
+    options: [
+      { text: '1498 AD', isCorrect: false },
+      { text: '1600 AD', isCorrect: true },
+      { text: '1664 AD', isCorrect: false },
+      { text: '1731 AD', isCorrect: false }
+    ]
+  },
+  // Q52
+  {
+    id: 'q52',
+    question: 'Which European power established their first trading house in Sutanati, Calcutta?',
+    options: [
+      { text: 'British', isCorrect: true },
+      { text: 'Dutch', isCorrect: false },
+      { text: 'French', isCorrect: false },
+      { text: 'Portuguese', isCorrect: false }
+    ]
+  },
+  // Q53
+  {
+    id: 'q53',
+    question: 'Which European power reached Ajmer in 1615 AD?',
+    options: [
+      { text: 'Dutch', isCorrect: false },
+      { text: 'French', isCorrect: false },
+      { text: 'British', isCorrect: true },
+      { text: 'Portuguese', isCorrect: false }
+    ]
+  },
+  // Q54
+  {
+    id: 'q54',
+    question: 'Which European power established the first temporary factory in Masulipatnam?',
+    options: [
+      { text: 'British', isCorrect: true },
+      { text: 'Dutch', isCorrect: false },
+      { text: 'French', isCorrect: false },
+      { text: 'Portuguese', isCorrect: false }
+    ]
+  },
+  // Q55
+  {
+    id: 'q55',
+    question: 'Which European power established their first factory in Cochin in 1503 AD?',
+    options: [
+      { text: 'British', isCorrect: false },
+      { text: 'Dutch', isCorrect: false },
+      { text: 'French', isCorrect: false },
+      { text: 'Portuguese', isCorrect: true }
+    ]
+  },
+  // Q56
+  {
+    id: 'q56',
+    question: 'Which European power established the second Portuguese factory in 1505 AD?',
+    options: [
+      { text: 'British', isCorrect: false },
+      { text: 'Dutch', isCorrect: false },
+      { text: 'French', isCorrect: false },
+      { text: 'Portuguese', isCorrect: true }
+    ]
+  },
+  // Q57
+  {
+    id: 'q57',
+    question: 'Which company was established by Colbert in 1664 AD?',
+    options: [
+      { text: 'British East India Company', isCorrect: false },
+      { text: 'Dutch East India Company', isCorrect: false },
+      { text: 'French East India Company', isCorrect: true },
+      { text: 'Portuguese East India Company', isCorrect: false }
+    ]
+  },
+  // Q58
+  {
+    id: 'q58',
+    question: 'Which European power established their first Kothi in Surat in 1668 AD?',
+    options: [
+      { text: 'British', isCorrect: false },
+      { text: 'Dutch', isCorrect: false },
+      { text: 'French', isCorrect: true },
+      { text: 'Swedish', isCorrect: false }
+    ]
+  },
+  // Q59
+  {
+    id: 'q59',
+    question: 'Which European power was less significant in India compared to others?',
+    options: [
+      { text: 'British', isCorrect: false },
+      { text: 'Dutch', isCorrect: false },
+      { text: 'French', isCorrect: false },
+      { text: 'Swedish', isCorrect: true }
+    ]
+  },
+  // Q60
+  {
+    id: 'q60',
+    question: 'Which European power established the first factory in Kannur?',
+    options: [
+      { text: 'British', isCorrect: false },
+      { text: 'Dutch', isCorrect: false },
+      { text: 'French', isCorrect: false },
+      { text: 'Portuguese', isCorrect: true }
+    ]
+  },
+  // Q61
+  {
+    id: 'q61',
+    question: 'Which European governor is associated with the Carnatic Wars?',
+    options: [
+      { text: 'Gerald Aungier', isCorrect: false },
+      { text: 'Sir Thomas Roe', isCorrect: false },
+      { text: 'Governor Dupleix', isCorrect: true },
+      { text: 'William Hawkins', isCorrect: false }
+    ]
+  },
+  // Q62
+  {
+    id: 'q62',
+    question: 'Which European power\'s trading efforts coincided with the Dutch in 1608 AD?',
+    options: [
+      { text: 'British', isCorrect: true },
+      { text: 'French', isCorrect: false },
+      { text: 'Portuguese', isCorrect: false },
+      { text: 'Swedish', isCorrect: false }
+    ]
+  },
+  // Q63
+  {
+    id: 'q63',
+    question: 'Which European company was established in 1602 AD?',
+    options: [
+      { text: 'British East India Company', isCorrect: false },
+      { text: 'Dutch East India Company', isCorrect: true },
+      { text: 'French East India Company', isCorrect: false },
+      { text: 'Portuguese East India Company', isCorrect: false }
+    ]
+  },
+  // Q64
+  {
+    id: 'q64',
+    question: 'Which European power established their headquarters in Cochin?',
+    options: [
+      { text: 'British', isCorrect: false },
+      { text: 'Dutch', isCorrect: false },
+      { text: 'French', isCorrect: false },
+      { text: 'Portuguese', isCorrect: true }
+    ]
+  },
+  // Q65
+  {
+    id: 'q65',
+    question: 'Which European power established their second factory in Kannur in 1505 AD?',
+    options: [
+      { text: 'British', isCorrect: false },
+      { text: 'Dutch', isCorrect: false },
+      { text: 'French', isCorrect: false },
+      { text: 'Portuguese', isCorrect: true }
+    ]
+  },
+  // Q66
+  {
+    id: 'q66',
+    question: 'Which European power\'s first factory was in Cochin?',
+    options: [
+      { text: 'British', isCorrect: false },
+      { text: 'Dutch', isCorrect: false },
+      { text: 'French', isCorrect: false },
+      { text: 'Portuguese', isCorrect: true }
+    ]
+  },
+  // Q67
+  {
+    id: 'q67',
+    question: 'Which European power established the first English trading house in Masulipatnam?',
+    options: [
+      { text: 'British', isCorrect: true },
+      { text: 'Dutch', isCorrect: false },
+      { text: 'French', isCorrect: false },
+      { text: 'Portuguese', isCorrect: false }
+    ]
+  },
+  // Q68
+  {
+    id: 'q68',
+    question: 'Which European power established the first factory in Bombay?',
+    options: [
+      { text: 'British', isCorrect: true },
+      { text: 'Dutch', isCorrect: false },
+      { text: 'French', isCorrect: false },
+      { text: 'Portuguese', isCorrect: false }
+    ]
+  },
+  // Q69
+  {
+    id: 'q69',
+    question: 'Which European power established Puducherry as their headquarters in 1701 AD?',
+    options: [
+      { text: 'British', isCorrect: false },
+      { text: 'Dutch', isCorrect: false },
+      { text: 'French', isCorrect: true },
+      { text: 'Portuguese', isCorrect: false }
+    ]
+  },
+  // Q70
+  {
+    id: 'q70',
+    question: 'Which European power was granted a trade monopoly by Queen Elizabeth I?',
+    options: [
+      { text: 'British', isCorrect: true },
+      { text: 'Dutch', isCorrect: false },
+      { text: 'French', isCorrect: false },
+      { text: 'Portuguese', isCorrect: false }
+    ]
+  },
+  // Q71
+  {
+    id: 'q71',
+    question: 'Which European power established their first factory in Calicut?',
+    options: [
+      { text: 'British', isCorrect: false },
+      { text: 'Dutch', isCorrect: false },
+      { text: 'French', isCorrect: false },
+      { text: 'Portuguese', isCorrect: true }
+    ]
+  },
+  // Q72
+  {
+    id: 'q72',
+    question: 'Which European power established their presence in India in 1605 AD?',
+    options: [
+      { text: 'British', isCorrect: false },
+      { text: 'Dutch', isCorrect: true },
+      { text: 'French', isCorrect: false },
+      { text: 'Swedish', isCorrect: false }
+    ]
+  },
+  // Q73
+  {
+    id: 'q73',
+    question: 'Which European company was established first?',
+    options: [
+      { text: 'British East India Company', isCorrect: false },
+      { text: 'Dutch East India Company', isCorrect: false },
+      { text: 'French East India Company', isCorrect: false },
+      { text: 'Portuguese East India Company', isCorrect: true }
+    ]
+  },
+  // Q74
+  {
+    id: 'q74',
+    question: 'Which European power established their headquarters in Bombay in 1661 AD?',
+    options: [
+      { text: 'British', isCorrect: true },
+      { text: 'Dutch', isCorrect: false },
+      { text: 'French', isCorrect: false },
+      { text: 'Portuguese', isCorrect: false }
+    ]
+  },
+  // Q75
+  {
+    id: 'q75',
+    question: 'Which European power established the first temporary factory in Masulipatnam?',
+    options: [
+      { text: 'British', isCorrect: true },
+      { text: 'Dutch', isCorrect: false },
+      { text: 'French', isCorrect: false },
+      { text: 'Portuguese', isCorrect: false }
+    ]
+  },
+  // Q76
+  {
+    id: 'q76',
+    question: 'Which European power established the first English trading house in Masulipatnam?',
+    options: [
+      { text: 'British', isCorrect: true },
+      { text: 'Dutch', isCorrect: false },
+      { text: 'French', isCorrect: false },
+      { text: 'Portuguese', isCorrect: false }
+    ]
+  },
+  // Q77
+  {
+    id: 'q77',
+    question: 'Which European company was renamed to the East India Company in 1833?',
+    options: [
+      { text: 'British East India Company', isCorrect: true },
+      { text: 'Dutch East India Company', isCorrect: false },
+      { text: 'French East India Company', isCorrect: false },
+      { text: 'Portuguese East India Company', isCorrect: false }
+    ]
+  },
+  // Q78
+  {
+    id: 'q78',
+    question: 'Which European power introduced the printing press to Goa?',
+    options: [
+      { text: 'British', isCorrect: false },
+      { text: 'Dutch', isCorrect: false },
+      { text: 'French', isCorrect: false },
+      { text: 'Portuguese', isCorrect: true }
+    ]
+  },
+  // Q79
+  {
+    id: 'q79',
+    question: 'Which European governor established Bombay as a key settlement?',
+    options: [
+      { text: 'Sir Thomas Roe', isCorrect: false },
+      { text: 'William Hawkins', isCorrect: false },
+      { text: 'Gerald Aungier', isCorrect: true },
+      { text: 'Governor Dupleix', isCorrect: false }
+    ]
+  },
+  // Q80
+  {
+    id: 'q80',
+    question: 'Which European power established their first factory in Cochin in 1503 AD?',
+    options: [
+      { text: 'British', isCorrect: false },
+      { text: 'Dutch', isCorrect: false },
+      { text: 'French', isCorrect: false },
+      { text: 'Portuguese', isCorrect: true }
+    ]
+  },
+  // Q81
+  {
+    id: 'q81',
+    question: 'Which European power introduced maize to India?',
+    options: [
+      { text: 'British', isCorrect: false },
+      { text: 'Dutch', isCorrect: false },
+      { text: 'French', isCorrect: false },
+      { text: 'Portuguese', isCorrect: true }
+    ]
+  },
+  // Q82
+  {
+    id: 'q82',
+    question: 'Which European power established their second factory in Kannur in 1505 AD?',
+    options: [
+      { text: 'British', isCorrect: false },
+      { text: 'Dutch', isCorrect: false },
+      { text: 'French', isCorrect: false },
+      { text: 'Portuguese', isCorrect: true }
+    ]
+  },
+  // Q83
+  {
+    id: 'q83',
+    question: 'Which European power was formally headquartered in Puducherry?',
+    options: [
+      { text: 'British', isCorrect: false },
+      { text: 'Dutch', isCorrect: false },
+      { text: 'French', isCorrect: true },
+      { text: 'Portuguese', isCorrect: false }
+    ]
+  },
+  // Q84
+  {
+    id: 'q84',
+    question: 'Which European company was established by Louis XIV\'s minister?',
+    options: [
+      { text: 'British East India Company', isCorrect: false },
+      { text: 'Dutch East India Company', isCorrect: false },
+      { text: 'French East India Company', isCorrect: true },
+      { text: 'Portuguese East India Company', isCorrect: false }
+    ]
+  },
+  // Q85
+  {
+    id: 'q85',
+    question: 'Which European power established the second factory in Masulipatnam in 1669 AD?',
+    options: [
+      { text: 'British', isCorrect: false },
+      { text: 'Dutch', isCorrect: false },
+      { text: 'French', isCorrect: true },
+      { text: 'Swedish', isCorrect: false }
+    ]
+  },
+  // Q86
+  {
+    id: 'q86',
+    question: 'Which European governor is associated with the British establishment in Bombay?',
+    options: [
+      { text: 'Sir Thomas Roe', isCorrect: false },
+      { text: 'William Hawkins', isCorrect: false },
+      { text: 'Gerald Aungier', isCorrect: true },
+      { text: 'Governor Dupleix', isCorrect: false }
+    ]
+  },
+  // Q87
+  {
+    id: 'q87',
+    question: 'Which European power established their first factory in Surat in 1613 AD?',
+    options: [
+      { text: 'British', isCorrect: true },
+      { text: 'Dutch', isCorrect: false },
+      { text: 'French', isCorrect: false },
+      { text: 'Portuguese', isCorrect: false }
+    ]
+  },
+  // Q88
+  {
+    id: 'q88',
+    question: 'Which European power established their presence in Calcutta in 1690 AD?',
+    options: [
+      { text: 'British', isCorrect: true },
+      { text: 'Dutch', isCorrect: false },
+      { text: 'French', isCorrect: false },
+      { text: 'Swedish', isCorrect: false }
+    ]
+  },
+  // Q89
+  {
+    id: 'q89',
+    question: 'Which European power was formally headquartered in Goa?',
+    options: [
+      { text: 'British', isCorrect: false },
+      { text: 'Dutch', isCorrect: false },
+      { text: 'French', isCorrect: false },
+      { text: 'Portuguese', isCorrect: true }
+    ]
+  },
+  // Q90
+  {
+    id: 'q90',
+    question: 'Which European power established the first French Kothi in Surat?',
+    options: [
+      { text: 'British', isCorrect: false },
+      { text: 'Dutch', isCorrect: false },
+      { text: 'French', isCorrect: true },
+      { text: 'Swedish', isCorrect: false }
+    ]
+  },
+  // Q91
+  {
+    id: 'q91',
+    question: 'Which European power established the first permanent factory in Surat in 1613 AD?',
+    options: [
+      { text: 'British', isCorrect: true },
+      { text: 'Dutch', isCorrect: false },
+      { text: 'French', isCorrect: false },
+      { text: 'Portuguese', isCorrect: false }
+    ]
+  },
+  // Q92
+  {
+    id: 'q92',
+    question: 'Which European power introduced tobacco to India?',
+    options: [
+      { text: 'British', isCorrect: false },
+      { text: 'Dutch', isCorrect: false },
+      { text: 'French', isCorrect: false },
+      { text: 'Portuguese', isCorrect: true }
+    ]
+  },
+  // Q93
+  {
+    id: 'q93',
+    question: 'Which European power established the first French trading house in Surat?',
+    options: [
+      { text: 'British', isCorrect: false },
+      { text: 'Dutch', isCorrect: false },
+      { text: 'French', isCorrect: true },
+      { text: 'Swedish', isCorrect: false }
+    ]
+  },
+  // Q94
+  {
+    id: 'q94',
+    question: 'Which European company was established in 1664 AD to engage in trade with India?',
+    options: [
+      { text: 'British East India Company', isCorrect: false },
+      { text: 'Dutch East India Company', isCorrect: false },
+      { text: 'French East India Company', isCorrect: true },
+      { text: 'Portuguese East India Company', isCorrect: false }
+    ]
+  },
+  // Q95
+  {
+    id: 'q95',
+    question: 'Which European power established the first factory in Cochin?',
+    options: [
+      { text: 'British', isCorrect: false },
+      { text: 'Dutch', isCorrect: false },
+      { text: 'French', isCorrect: false },
+      { text: 'Portuguese', isCorrect: true }
+    ]
+  },
+  // Q96
+  {
+    id: 'q96',
+    question: 'Which European power established the second factory in Kannur in 1605 AD?',
+    options: [
+      { text: 'British', isCorrect: false },
+      { text: 'Dutch', isCorrect: true },
+      { text: 'French', isCorrect: false },
+      { text: 'Portuguese', isCorrect: false }
+    ]
+  },
+  // Q97
+  {
+    id: 'q97',
+    question: 'Which European power established the first French trading house in Surat in 1668 AD?',
+    options: [
+      { text: 'British', isCorrect: false },
+      { text: 'Dutch', isCorrect: false },
+      { text: 'French', isCorrect: true },
+      { text: 'Swedish', isCorrect: false }
+    ]
+  },
+  // Q98
+  {
+    id: 'q98',
+    question: 'Which European power established the first Swedish presence in India?',
+    options: [
+      { text: 'British', isCorrect: false },
+      { text: 'Dutch', isCorrect: false },
+      { text: 'French', isCorrect: false },
+      { text: 'Swedish', isCorrect: true }
+    ]
+  },
+  // Q99
+  {
+    id: 'q99',
+    question: 'Which European power established the first temporary factory in Masulipatnam in 1611 AD?',
+    options: [
+      { text: 'British', isCorrect: true },
+      { text: 'Dutch', isCorrect: false },
+      { text: 'French', isCorrect: false },
+      { text: 'Portuguese', isCorrect: false }
+    ]
+  },
+  // Q100
+  {
+    id: 'q100',
+    question: 'Which European power established their headquarters in Cochin?',
+    options: [
+      { text: 'British', isCorrect: false },
+      { text: 'Dutch', isCorrect: false },
+      { text: 'French', isCorrect: false },
+      { text: 'Portuguese', isCorrect: true }
+    ]
+  },
+  // Q101
+  {
+    id: 'q101',
+    question: 'Which European power established the first factory in Cochin in 1503 AD?',
+    options: [
+      { text: 'William Hawkins', isCorrect: false },
+      { text: 'Vasco da Gama', isCorrect: false },
+      { text: 'Pedro Álvares Cabral', isCorrect: false },
+      { text: 'Portuguese', isCorrect: true }
+    ]
+  },
+  // Q102
+  {
+    id: 'q102',
+    question: 'Who was the British ambassador that arrived at Jahangir\'s court in 1615 AD?',
+    options: [
+      { text: 'Gerald Aungier', isCorrect: false },
+      { text: 'Sir Thomas Roe', isCorrect: true },
+      { text: 'William Hawkins', isCorrect: false },
+      { text: 'Ralph Fitch', isCorrect: false }
+    ]
+  },
+  // Q103
+  {
+    id: 'q103',
+    question: 'In which year did Queen Elizabeth I grant the British East India Company a trade monopoly?',
+    options: [
+      { text: '1498 AD', isCorrect: false },
+      { text: '1600 AD', isCorrect: true },
+      { text: '1664 AD', isCorrect: false },
+      { text: '1731 AD', isCorrect: false }
+    ]
+  },
+  // Q104
+  {
+    id: 'q104',
+    question: 'Which European power introduced maize to India?',
+    options: [
+      { text: 'British', isCorrect: false },
+      { text: 'Dutch', isCorrect: false },
+      { text: 'French', isCorrect: false },
+      { text: 'Portuguese', isCorrect: true }
+    ]
+  },
+  // Q105
+  {
+    id: 'q105',
+    question: 'Which Mughal Emperor did Captain Hawkins meet in Agra in 1608 AD?',
+    options: [
+      { text: 'Akbar', isCorrect: false },
+      { text: 'Jahangir', isCorrect: true },
+      { text: 'Shah Jahan', isCorrect: false },
+      { text: 'Aurangzeb', isCorrect: false }
+    ]
+  },
+  // Q106
+  {
+    id: 'q106',
+    question: 'Which European company was established by Louis XIV\'s minister Colbert in 1664 AD?',
+    options: [
+      { text: 'British East India Company', isCorrect: false },
+      { text: 'Dutch East India Company', isCorrect: false },
+      { text: 'French East India Company', isCorrect: true },
+      { text: 'Portuguese East India Company', isCorrect: false }
+    ]
+  },
+  // Q107
+  {
+    id: 'q107',
+    question: 'Who was the first Portuguese explorer to reach India in 1498 AD?',
+    options: [
+      { text: 'Alfonso de Albuquerque', isCorrect: false },
+      { text: 'Pedro Álvares Cabral', isCorrect: false },
+      { text: 'Francisco de Almeida', isCorrect: false },
+      { text: 'Vasco da Gama', isCorrect: true }
+    ]
+  },
+  // Q108
+  {
+    id: 'q108',
+    question: 'Which European power established the second factory in Masulipatnam in 1669 AD?',
+    options: [
+      { text: 'British', isCorrect: false },
+      { text: 'Dutch', isCorrect: false },
+      { text: 'French', isCorrect: true },
+      { text: 'Swedish', isCorrect: false }
+    ]
+  },
+  // Q109
+  {
+    id: 'q109',
+    question: 'Which European governor is renowned for establishing Bombay as a key British settlement?',
+    options: [
+      { text: 'Sir Thomas Roe', isCorrect: false },
+      { text: 'William Hawkins', isCorrect: false },
+      { text: 'Gerald Aungier', isCorrect: true },
+      { text: 'Governor Dupleix', isCorrect: false }
+    ]
+  },
+  // Q110
+  {
+    id: 'q110',
+    question: 'Which practice did the Portuguese attempt to ban in India in 1515 AD?',
+    options: [
+      { text: 'Child marriage', isCorrect: false },
+      { text: 'Sati', isCorrect: true },
+      { text: 'Idol worship', isCorrect: false },
+      { text: 'Slavery', isCorrect: false }
+    ]
+  },
+  // Q111
+  {
+    id: 'q111',
+    question: 'Which European power was formally headquartered in Puducherry in 1701 AD?',
+    options: [
+      { text: 'British', isCorrect: false },
+      { text: 'Dutch', isCorrect: false },
+      { text: 'French', isCorrect: true },
+      { text: 'Portuguese', isCorrect: false }
+    ]
+  },
+  // Q112
+  {
+    id: 'q112',
+    question: 'What significant contribution did the Portuguese make to Indian agriculture?',
+    options: [
+      { text: 'Introduced tea cultivation', isCorrect: false },
+      { text: 'Introduced tobacco, potatoes, and maize', isCorrect: true },
+      { text: 'Introduced cotton farming', isCorrect: false },
+      { text: 'Introduced rice varieties', isCorrect: false }
+    ]
+  },
+  // Q113
+  {
+    id: 'q113',
+    question: 'Which European power established the first printing press in Goa in 1556 AD?',
+    options: [
+      { text: 'British', isCorrect: false },
+      { text: 'Dutch', isCorrect: false },
+      { text: 'French', isCorrect: false },
+      { text: 'Portuguese', isCorrect: true }
+    ]
+  },
+  // Q114
+  {
+    id: 'q114',
+    question: 'Which European power established their first trading house in Sutanati, Calcutta in 1690 AD?',
+    options: [
+      { text: 'British', isCorrect: true },
+      { text: 'Dutch', isCorrect: false },
+      { text: 'French', isCorrect: false },
+      { text: 'Portuguese', isCorrect: false }
+    ]
+  },
+  // Q115
+  {
+    id: 'q115',
+    question: 'Which European power established their presence in India in 1605 AD?',
+    options: [
+      { text: 'British', isCorrect: false },
+      { text: 'Dutch', isCorrect: true },
+      { text: 'French', isCorrect: false },
+      { text: 'Swedish', isCorrect: false }
+    ]
+  },
+  // Q116
+  {
+    id: 'q116',
+    question: 'Who was the first Portuguese Viceroy in India?',
+    options: [
+      { text: 'Vasco da Gama', isCorrect: false },
+      { text: 'Pedro Álvares Cabral', isCorrect: false },
+      { text: 'Francisco de Almeida', isCorrect: true },
+      { text: 'Alfonso de Albuquerque', isCorrect: false }
+    ]
+  },
+  // Q117
+  {
+    id: 'q117',
+    question: 'Which European power was less significant in India compared to others?',
+    options: [
+      { text: 'British', isCorrect: false },
+      { text: 'Dutch', isCorrect: false },
+      { text: 'French', isCorrect: false },
+      { text: 'Swedish', isCorrect: true }
+    ]
+  },
+  // Q118
+  {
+    id: 'q118',
+    question: 'In which year did the Portuguese establish their second factory in Kannur?',
+    options: [
+      { text: '1498 AD', isCorrect: false },
+      { text: '1503 AD', isCorrect: false },
+      { text: '1505 AD', isCorrect: true },
+      { text: '1510 AD', isCorrect: false }
+    ]
+  },
+  // Q119
+  {
+    id: 'q119',
+    question: 'Which European governor is associated with the Carnatic Wars?',
+    options: [
+      { text: 'Gerald Aungier', isCorrect: false },
+      { text: 'Sir Thomas Roe', isCorrect: false },
+      { text: 'Governor Dupleix', isCorrect: true },
+      { text: 'William Hawkins', isCorrect: false }
+    ]
+  },
+  // Q120
+  {
+    id: 'q120',
+    question: 'Which European power first reached Madagascar?',
+    options: [
+      { text: 'British', isCorrect: false },
+      { text: 'Dutch', isCorrect: false },
+      { text: 'French', isCorrect: true },
+      { text: 'Portuguese', isCorrect: false }
+    ]
+  },
+  // Q121
+  {
+    id: 'q121',
+    question: 'Which European company was established in 1602 AD?',
+    options: [
+      { text: 'British East India Company', isCorrect: false },
+      { text: 'Dutch East India Company', isCorrect: true },
+      { text: 'French East India Company', isCorrect: false },
+      { text: 'Portuguese East India Company', isCorrect: false }
+    ]
+  },
+  // Q122
+  {
+    id: 'q122',
+    question: 'Who established the first French trading house in Surat in 1668 AD?',
+    options: [
+      { text: 'William Hawkins', isCorrect: false },
+      { text: 'Franco Caro', isCorrect: true },
+      { text: 'Sir Thomas Roe', isCorrect: false },
+      { text: 'Governor Dupleix', isCorrect: false }
+    ]
+  },
+  // Q123
+  {
+    id: 'q123',
+    question: 'Which European power established their first factory in Calicut?',
+    options: [
+      { text: 'British', isCorrect: false },
+      { text: 'Dutch', isCorrect: false },
+      { text: 'French', isCorrect: false },
+      { text: 'Portuguese', isCorrect: true }
+    ]
+  },
+  // Q124
+  {
+    id: 'q124',
+    question: 'Which European company was renamed to the East India Company in 1833 AD?',
+    options: [
+      { text: 'British East India Company', isCorrect: true },
+      { text: 'Dutch East India Company', isCorrect: false },
+      { text: 'French East India Company', isCorrect: false },
+      { text: 'Portuguese East India Company', isCorrect: false }
+    ]
+  },
+  // Q125
+  {
+    id: 'q125',
+    question: 'Which European power established their headquarters in Cochin?',
+    options: [
+      { text: 'British', isCorrect: false },
+      { text: 'Dutch', isCorrect: false },
+      { text: 'French', isCorrect: false },
+      { text: 'Portuguese', isCorrect: true }
+    ]
+  },
+  // Q126
+  {
+    id: 'q126',
+    question: 'Who was the second Portuguese explorer to reach India in 1500 AD?',
+    options: [
+      { text: 'Vasco da Gama', isCorrect: false },
+      { text: 'Alfonso de Albuquerque', isCorrect: false },
+      { text: 'Pedro Álvares Cabral', isCorrect: true },
+      { text: 'Francisco de Almeida', isCorrect: false }
+    ]
+  },
+  // Q127
+  {
+    id: 'q127',
+    question: 'Which European power introduced the printing press to India?',
+    options: [
+      { text: 'British', isCorrect: false },
+      { text: 'Dutch', isCorrect: false },
+      { text: 'French', isCorrect: false },
+      { text: 'Portuguese', isCorrect: true }
+    ]
+  },
+  // Q128
+  {
+    id: 'q128',
+    question: 'Which European governor established Bombay as a key settlement?',
+    options: [
+      { text: 'Sir Thomas Roe', isCorrect: false },
+      { text: 'William Hawkins', isCorrect: false },
+      { text: 'Gerald Aungier', isCorrect: true },
+      { text: 'Governor Dupleix', isCorrect: false }
+    ]
+  },
+  // Q129
+  {
+    id: 'q129',
+    question: 'Which European power established their first factory in Surat in 1613 AD?',
+    options: [
+      { text: 'British', isCorrect: true },
+      { text: 'Dutch', isCorrect: false },
+      { text: 'French', isCorrect: false },
+      { text: 'Portuguese', isCorrect: false }
+    ]
+  },
+  // Q130
+  {
+    id: 'q130',
+    question: 'Which European power established their presence in Calcutta in 1690 AD?',
+    options: [
+      { text: 'British', isCorrect: true },
+      { text: 'Dutch', isCorrect: false },
+      { text: 'French', isCorrect: false },
+      { text: 'Swedish', isCorrect: false }
+    ]
+  },
+  // Q131
+  {
+    id: 'q131',
+    question: 'Which European power was formally headquartered in Goa?',
+    options: [
+      { text: 'British', isCorrect: false },
+      { text: 'Dutch', isCorrect: false },
+      { text: 'French', isCorrect: false },
+      { text: 'Portuguese', isCorrect: true }
+    ]
+  },
+  // Q132
+  {
+    id: 'q132',
+    question: 'Which European power established their first French Kothi in Surat?',
+    options: [
+      { text: 'British', isCorrect: false },
+      { text: 'Dutch', isCorrect: false },
+      { text: 'French', isCorrect: true },
+      { text: 'Swedish', isCorrect: false }
+    ]
+  },
+  // Q133
+  {
+    id: 'q133',
+    question: 'Which European company was established by Colbert in 1664 AD?',
+    options: [
+      { text: 'British East India Company', isCorrect: false },
+      { text: 'Dutch East India Company', isCorrect: false },
+      { text: 'French East India Company', isCorrect: true },
+      { text: 'Portuguese East India Company', isCorrect: false }
+    ]
+  },
+  // Q134
+  {
+    id: 'q134',
+    question: 'Which European power established their first Swedish presence in India?',
+    options: [
+      { text: 'British', isCorrect: false },
+      { text: 'Dutch', isCorrect: false },
+      { text: 'French', isCorrect: false },
+      { text: 'Swedish', isCorrect: true }
+    ]
+  },
+  // Q135
+  {
+    id: 'q135',
+    question: 'Which European power established the first temporary factory in Masulipatnam in 1611 AD?',
+    options: [
+      { text: 'British', isCorrect: true },
+      { text: 'Dutch', isCorrect: false },
+      { text: 'French', isCorrect: false },
+      { text: 'Portuguese', isCorrect: false }
+    ]
+  },
+  // Q136
+  {
+    id: 'q136',
+    question: 'Which European power established their headquarters in Bombay in 1661 AD?',
+    options: [
+      { text: 'British', isCorrect: true },
+      { text: 'Dutch', isCorrect: false },
+      { text: 'French', isCorrect: false },
+      { text: 'Portuguese', isCorrect: false }
+    ]
+  },
+  // Q137
+  {
+    id: 'q137',
+    question: 'Which European power established the first French trading house in Surat in 1668 AD?',
+    options: [
+      { text: 'British', isCorrect: false },
+      { text: 'Dutch', isCorrect: false },
+      { text: 'French', isCorrect: true },
+      { text: 'Swedish', isCorrect: false }
+    ]
+  },
+  // Q138
+  {
+    id: 'q138',
+    question: 'Which European company was established first?',
+    options: [
+      { text: 'Dutch East India Company', isCorrect: false },
+      { text: 'French East India Company', isCorrect: false },
+      { text: 'British East India Company', isCorrect: false },
+      { text: 'Portuguese East India Company', isCorrect: true }
+    ]
+  },
+  // Q139
+  {
+    id: 'q139',
+    question: 'Which European power established the second factory in Kannur in 1605 AD?',
+    options: [
+      { text: 'British', isCorrect: false },
+      { text: 'Dutch', isCorrect: true },
+      { text: 'French', isCorrect: false },
+      { text: 'Portuguese', isCorrect: false }
+    ]
+  },
+  // Q140
+  {
+    id: 'q140',
+    question: 'Which European power established the first factory in Bombay?',
+    options: [
+      { text: 'British', isCorrect: true },
+      { text: 'Dutch', isCorrect: false },
+      { text: 'French', isCorrect: false },
+      { text: 'Portuguese', isCorrect: false }
+    ]
+  },
+  // Q141
+  {
+    id: 'q141',
+    question: 'Which European governor is associated with the British establishment in Bombay?',
+    options: [
+      { text: 'Sir Thomas Roe', isCorrect: false },
+      { text: 'William Hawkins', isCorrect: false },
+      { text: 'Gerald Aungier', isCorrect: true },
+      { text: 'Governor Dupleix', isCorrect: false }
+    ]
+  },
+  // Q142
+  {
+    id: 'q142',
+    question: 'Which European power established the first factory in Cochin in 1503 AD?',
+    options: [
+      { text: 'British', isCorrect: false },
+      { text: 'Dutch', isCorrect: false },
+      { text: 'French', isCorrect: false },
+      { text: 'Portuguese', isCorrect: true }
+    ]
+  },
+  // Q143
+  {
+    id: 'q143',
+    question: 'Which European power introduced the printing press to Goa?',
+    options: [
+      { text: 'British', isCorrect: false },
+      { text: 'Dutch', isCorrect: false },
+      { text: 'French', isCorrect: false },
+      { text: 'Portuguese', isCorrect: true }
+    ]
+  },
+  // Q144
+  {
+    id: 'q144',
+    question: 'Which European power established the second Portuguese factory in 1505 AD?',
+    options: [
+      { text: 'British', isCorrect: false },
+      { text: 'Dutch', isCorrect: false },
+      { text: 'French', isCorrect: false },
+      { text: 'Portuguese', isCorrect: true }
+    ]
+  },
+  // Q145
+  {
+    id: 'q145',
+    question: 'Which European power introduced the printing press to India in 1556 AD?',
+    options: [
+      { text: 'British', isCorrect: false },
+      { text: 'Dutch', isCorrect: false },
+      { text: 'French', isCorrect: false },
+      { text: 'Portuguese', isCorrect: true }
+    ]
+  },
+  // Q146
+  {
+    id: 'q146',
+    question: 'Which European power established their second factory in Masulipatnam in 1669 AD?',
+    options: [
+      { text: 'British', isCorrect: false },
+      { text: 'Dutch', isCorrect: false },
+      { text: 'French', isCorrect: true },
+      { text: 'Swedish', isCorrect: false }
+    ]
+  },
+  // Q147
+  {
+    id: 'q147',
+    question: 'Which European power established their first factory in Calicut?',
+    options: [
+      { text: 'British', isCorrect: false },
+      { text: 'Dutch', isCorrect: false },
+      { text: 'French', isCorrect: false },
+      { text: 'Portuguese', isCorrect: true }
+    ]
+  },
+  // Q148
+  {
+    id: 'q148',
+    question: 'Which European company was established by Colbert in 1664 AD?',
+    options: [
+      { text: 'British East India Company', isCorrect: false },
+      { text: 'Dutch East India Company', isCorrect: false },
+      { text: 'French East India Company', isCorrect: true },
+      { text: 'Portuguese East India Company', isCorrect: false }
+    ]
+  },
+  // Q149
+  {
+    id: 'q149',
+    question: 'Which European power established their first French Kothi in Surat in 1668 AD?',
+    options: [
+      { text: 'British', isCorrect: false },
+      { text: 'Dutch', isCorrect: false },
+      { text: 'French', isCorrect: true },
+      { text: 'Swedish', isCorrect: false }
+    ]
+  },
+  // Q150
+  {
+    id: 'q150',
+    question: 'Which European governor is associated with the Carnatic Wars?',
+    options: [
+      { text: 'Gerald Aungier', isCorrect: false },
+      { text: 'Sir Thomas Roe', isCorrect: false },
+      { text: 'Governor Dupleix', isCorrect: true },
+      { text: 'William Hawkins', isCorrect: false }
+    ]
+  },
+
+    {
+      id: 'q151',
+      question: 'Which European company established the first factory in Bombay?',
+      options: [
+        { text: 'British East India Company', isCorrect: true },
+        { text: 'Dutch East India Company', isCorrect: false },
+        { text: 'French East India Company', isCorrect: false },
+        { text: 'Portuguese East India Company', isCorrect: false }
+      ]
+    },
+    {
+      id: 'q152',
+      question: 'Which European power introduced the crops tobacco, potatoes, and maize to India?',
+      options: [
+        { text: 'British', isCorrect: false },
+        { text: 'Dutch', isCorrect: false },
+        { text: 'French', isCorrect: false },
+        { text: 'Portuguese', isCorrect: true }
+      ]
+    },
+    {
+      id: 'q153',
+      question: 'Who was the Portuguese explorer that discovered the sea route to India in 1498 AD?',
+      options: [
+        { text: 'Francisco de Almeida', isCorrect: false },
+        { text: 'Pedro Álvares Cabral', isCorrect: false },
+        { text: 'Alfonso de Albuquerque', isCorrect: false },
+        { text: 'Vasco da Gama', isCorrect: true }
+      ]
+    },
+    {
+      id: 'q154',
+      question: 'Which European power established their presence in India in 1731 AD?',
+      options: [
+        { text: 'British', isCorrect: false },
+        { text: 'Dutch', isCorrect: false },
+        { text: 'French', isCorrect: false },
+        { text: 'Swedish', isCorrect: true }
+      ]
+    },
+    {
+      id: 'q155',
+      question: 'Who established the first French trading house in Surat in 1668 AD?',
+      options: [
+        { text: 'Franco Caro', isCorrect: true },
+        { text: 'Governor Dupleix', isCorrect: false },
+        { text: 'Sir Thomas Roe', isCorrect: false },
+        { text: 'William Hawkins', isCorrect: false }
+      ]
+    },
+    {
+      id: 'q156',
+      question: 'Which European company was established in 1602 AD to compete with the British?',
+      options: [
+        { text: 'French East India Company', isCorrect: false },
+        { text: 'Dutch East India Company', isCorrect: true },
+        { text: 'Portuguese East India Company', isCorrect: false },
+        { text: 'Swedish East India Company', isCorrect: false }
+      ]
+    },
+    {
+      id: 'q157',
+      question: 'Which European power established their first temporary factory in Masulipatnam in 1611 AD?',
+      options: [
+        { text: 'British', isCorrect: true },
+        { text: 'Dutch', isCorrect: false },
+        { text: 'French', isCorrect: false },
+        { text: 'Portuguese', isCorrect: false }
+      ]
+    },
+    {
+      id: 'q158',
+      question: 'Which European power established Puducherry as their headquarters in 1701 AD?',
+      options: [
+        { text: 'British', isCorrect: false },
+        { text: 'Dutch', isCorrect: false },
+        { text: 'French', isCorrect: true },
+        { text: 'Portuguese', isCorrect: false }
+      ]
+    },
+    {
+      id: 'q159',
+      question: 'Which European power established the second French factory in Masulipatnam in 1669 AD?',
+      options: [
+        { text: 'British', isCorrect: false },
+        { text: 'Dutch', isCorrect: false },
+        { text: 'French', isCorrect: true },
+        { text: 'Swedish', isCorrect: false }
+      ]
+    },
+    {
+      id: 'q160',
+      question: 'Which European power established the second factory in Kannur in 1605 AD?',
+      options: [
+        { text: 'British', isCorrect: false },
+        { text: 'Dutch', isCorrect: true },
+        { text: 'French', isCorrect: false },
+        { text: 'Portuguese', isCorrect: false }
+      ]
+    },
+    {
+      id: 'q161',
+      question: 'Which European governor is known for establishing Bombay as a key British settlement?',
+      options: [
+        { text: 'Sir Thomas Roe', isCorrect: false },
+        { text: 'William Hawkins', isCorrect: false },
+        { text: 'Gerald Aungier', isCorrect: true },
+        { text: 'Governor Dupleix', isCorrect: false }
+      ]
+    },
+    {
+      id: 'q162',
+      question: 'Which European power established their presence in Calcutta in 1690 AD?',
+      options: [
+        { text: 'British', isCorrect: true },
+        { text: 'Dutch', isCorrect: false },
+        { text: 'French', isCorrect: false },
+        { text: 'Swedish', isCorrect: false }
+      ]
+    },
+    {
+      id: 'q163',
+      question: 'Which European power was formally headquartered in Goa?',
+      options: [
+        { text: 'British', isCorrect: false },
+        { text: 'Dutch', isCorrect: false },
+        { text: 'French', isCorrect: false },
+        { text: 'Portuguese', isCorrect: true }
+      ]
+    },
+    {
+      id: 'q164',
+      question: 'Which European power established their first French Kothi in Surat?',
+      options: [
+        { text: 'British', isCorrect: false },
+        { text: 'Dutch', isCorrect: false },
+        { text: 'French', isCorrect: true },
+        { text: 'Swedish', isCorrect: false }
+      ]
+    },
+    {
+      id: 'q165',
+      question: 'Which European company was established by Louis XIV\'s minister?',
+      options: [
+        { text: 'British East India Company', isCorrect: false },
+        { text: 'Dutch East India Company', isCorrect: false },
+        { text: 'French East India Company', isCorrect: true },
+        { text: 'Portuguese East India Company', isCorrect: false }
+      ]
+    },
+    {
+      id: 'q166',
+      question: 'Which European power established their second factory in Masulipatnam in 1669 AD?',
+      options: [
+        { text: 'British', isCorrect: false },
+        { text: 'Dutch', isCorrect: false },
+        { text: 'French', isCorrect: true },
+        { text: 'Swedish', isCorrect: false }
+      ]
+    },
+    {
+      id: 'q167',
+      question: 'Which European governor is associated with the British establishment in Bombay?',
+      options: [
+        { text: 'Sir Thomas Roe', isCorrect: false },
+        { text: 'William Hawkins', isCorrect: false },
+        { text: 'Gerald Aungier', isCorrect: true },
+        { text: 'Governor Dupleix', isCorrect: false }
+      ]
+    },
+    {
+      id: 'q168',
+      question: 'Which European power established their first factory in Surat in 1613 AD?',
+      options: [
+        { text: 'British', isCorrect: true },
+        { text: 'Dutch', isCorrect: false },
+        { text: 'French', isCorrect: false },
+        { text: 'Portuguese', isCorrect: false }
+      ]
+    },
+    {
+      id: 'q169',
+      question: 'Which European power established their presence in Calcutta in 1690 AD?',
+      options: [
+        { text: 'British', isCorrect: true },
+        { text: 'Dutch', isCorrect: false },
+        { text: 'French', isCorrect: false },
+        { text: 'Swedish', isCorrect: false }
+      ]
+    },
+    {
+      id: 'q170',
+      question: 'Which European power was formally headquartered in Goa?',
+      options: [
+        { text: 'British', isCorrect: false },
+        { text: 'Dutch', isCorrect: false },
+        { text: 'French', isCorrect: false },
+        { text: 'Portuguese', isCorrect: true }
+      ]
+    },
+    {
+      id: 'q171',
+      question: 'Which European power established their first French Kothi in Surat?',
+      options: [
+        { text: 'British', isCorrect: false },
+        { text: 'Dutch', isCorrect: false },
+        { text: 'French', isCorrect: true },
+        { text: 'Swedish', isCorrect: false }
+      ]
+    },
+    {
+      id: 'q172',
+      question: 'Which European company was established by Colbert in 1664 AD?',
+      options: [
+        { text: 'British East India Company', isCorrect: false },
+        { text: 'Dutch East India Company', isCorrect: false },
+        { text: 'French East India Company', isCorrect: true },
+        { text: 'Portuguese East India Company', isCorrect: false }
+      ]
+    },
+    {
+      id: 'q173',
+      question: 'Which European power established their first Swedish presence in India?',
+      options: [
+        { text: 'British', isCorrect: false },
+        { text: 'Dutch', isCorrect: false },
+        { text: 'French', isCorrect: false },
+        { text: 'Swedish', isCorrect: true }
+      ]
+    },
+    {
+      id: 'q174',
+      question: 'Which European power established the first temporary factory in Masulipatnam in 1611 AD?',
+      options: [
+        { text: 'British', isCorrect: true },
+        { text: 'Dutch', isCorrect: false },
+        { text: 'French', isCorrect: false },
+        { text: 'Portuguese', isCorrect: false }
+      ]
+    },
+    {
+      id: 'q175',
+      question: 'Which European power established their headquarters in Bombay in 1661 AD?',
+      options: [
+        { text: 'British', isCorrect: true },
+        { text: 'Dutch', isCorrect: false },
+        { text: 'French', isCorrect: false },
+        { text: 'Portuguese', isCorrect: false }
+      ]
+    },
+    {
+      id: 'q176',
+      question: 'Which European power established the first French trading house in Surat in 1668 AD?',
+      options: [
+        { text: 'British', isCorrect: false },
+        { text: 'Dutch', isCorrect: false },
+        { text: 'French', isCorrect: true },
+        { text: 'Swedish', isCorrect: false }
+      ]
+    },
+    {
+      id: 'q177',
+      question: 'Which European company was established first?',
+      options: [
+        { text: 'Dutch East India Company', isCorrect: false },
+        { text: 'French East India Company', isCorrect: false },
+        { text: 'British East India Company', isCorrect: false },
+        { text: 'Portuguese East India Company', isCorrect: true }
+      ]
+    },
+    {
+      id: 'q178',
+      question: 'Which European power established the second factory in Kannur in 1605 AD?',
+      options: [
+        { text: 'British', isCorrect: false },
+        { text: 'Dutch', isCorrect: true },
+        { text: 'French', isCorrect: false },
+        { text: 'Portuguese', isCorrect: false }
+      ]
+    },
+    {
+      id: 'q179',
+      question: 'Which European power established the first factory in Bombay?',
+      options: [
+        { text: 'British', isCorrect: true },
+        { text: 'Dutch', isCorrect: false },
+        { text: 'French', isCorrect: false },
+        { text: 'Portuguese', isCorrect: false }
+      ]
+    },
+    {
+      id: 'q180',
+      question: 'Which European governor is associated with the Carnatic Wars?',
+      options: [
+        { text: 'Gerald Aungier', isCorrect: false },
+        { text: 'Sir Thomas Roe', isCorrect: false },
+        { text: 'Governor Dupleix', isCorrect: true },
+        { text: 'William Hawkins', isCorrect: false }
+      ]
+    },
+    {
+      id: 'q181',
+      question: 'Which European power was less significant in India compared to others?',
+      options: [
+        { text: 'British', isCorrect: false },
+        { text: 'Dutch', isCorrect: false },
+        { text: 'French', isCorrect: false },
+        { text: 'Swedish', isCorrect: true }
+      ]
+    },
+    {
+      id: 'q182',
+      question: 'Which European power established their second factory in Kannur in 1605 AD?',
+      options: [
+        { text: 'British', isCorrect: false },
+        { text: 'Dutch', isCorrect: true },
+        { text: 'French', isCorrect: false },
+        { text: 'Portuguese', isCorrect: false }
+      ]
+    },
+    {
+      id: 'q183',
+      question: 'Which European power established their headquarters in Cochin?',
+      options: [
+        { text: 'British', isCorrect: false },
+        { text: 'Dutch', isCorrect: false },
+        { text: 'French', isCorrect: false },
+        { text: 'Portuguese', isCorrect: true }
+      ]
+    },
+    {
+      id: 'q184',
+      question: 'Which European governor established Bombay as a key settlement?',
+      options: [
+        { text: 'Sir Thomas Roe', isCorrect: false },
+        { text: 'William Hawkins', isCorrect: false },
+        { text: 'Gerald Aungier', isCorrect: true },
+        { text: 'Governor Dupleix', isCorrect: false }
+      ]
+    },
+    {
+      id: 'q185',
+      question: 'Which European power established their presence in Calcutta in 1690 AD?',
+      options: [
+        { text: 'British', isCorrect: true },
+        { text: 'Dutch', isCorrect: false },
+        { text: 'French', isCorrect: false },
+        { text: 'Swedish', isCorrect: false }
+      ]
+    },
+    {
+      id: 'q186',
+      question: 'Which European power was formally headquartered in Goa?',
+      options: [
+        { text: 'British', isCorrect: false },
+        { text: 'Dutch', isCorrect: false },
+        { text: 'French', isCorrect: false },
+        { text: 'Portuguese', isCorrect: true }
+      ]
+    },
+    {
+      id: 'q187',
+      question: 'Which European power established their first French Kothi in Surat?',
+      options: [
+        { text: 'British', isCorrect: false },
+        { text: 'Dutch', isCorrect: false },
+        { text: 'French', isCorrect: true },
+        { text: 'Swedish', isCorrect: false }
+      ]
+    },
+    {
+      id: 'q188',
+      question: 'Which European company was established by Colbert in 1664 AD?',
+      options: [
+        { text: 'British East India Company', isCorrect: false },
+        { text: 'Dutch East India Company', isCorrect: false },
+        { text: 'French East India Company', isCorrect: true },
+        { text: 'Portuguese East India Company', isCorrect: false }
+      ]
+    },
+    {
+      id: 'q189',
+      question: 'Which European power established their first Swedish presence in India?',
+      options: [
+        { text: 'British', isCorrect: false },
+        { text: 'Dutch', isCorrect: false },
+        { text: 'French', isCorrect: false },
+        { text: 'Swedish', isCorrect: true }
+      ]
+    },
+    {
+      id: 'q190',
+      question: 'Which European power established the first temporary factory in Masulipatnam in 1611 AD?',
+      options: [
+        { text: 'British', isCorrect: true },
+        { text: 'Dutch', isCorrect: false },
+        { text: 'French', isCorrect: false },
+        { text: 'Portuguese', isCorrect: false }
+      ]
+    },
+    {
+      id: 'q191',
+      question: 'Which European power established their headquarters in Bombay in 1661 AD?',
+      options: [
+        { text: 'British', isCorrect: true },
+        { text: 'Dutch', isCorrect: false },
+        { text: 'French', isCorrect: false },
+        { text: 'Portuguese', isCorrect: false }
+      ]
+    },
+    {
+      id: 'q192',
+      question: 'Which European power established the first French trading house in Surat in 1668 AD?',
+      options: [
+        { text: 'British', isCorrect: false },
+        { text: 'Dutch', isCorrect: false },
+        { text: 'French', isCorrect: true },
+        { text: 'Swedish', isCorrect: false }
+      ]
+    },
+    {
+      id: 'q193',
+      question: 'Which European company was established first?',
+      options: [
+        { text: 'Dutch East India Company', isCorrect: false },
+        { text: 'French East India Company', isCorrect: false },
+        { text: 'British East India Company', isCorrect: false },
+        { text: 'Portuguese East India Company', isCorrect: true }
+      ]
+    },
+    {
+      id: 'q194',
+      question: 'Which European power established the second factory in Kannur in 1605 AD?',
+      options: [
+        { text: 'British', isCorrect: false },
+        { text: 'Dutch', isCorrect: true },
+        { text: 'French', isCorrect: false },
+        { text: 'Portuguese', isCorrect: false }
+      ]
+    },
+    {
+      id: 'q195',
+      question: 'Which European power established the first factory in Bombay?',
+      options: [
+        { text: 'British', isCorrect: true },
+        { text: 'Dutch', isCorrect: false },
+        { text: 'French', isCorrect: false },
+        { text: 'Portuguese', isCorrect: false }
+      ]
+    },
+    {
+      id: 'q196',
+      question: 'Which European governor is associated with the Carnatic Wars?',
+      options: [
+        { text: 'Gerald Aungier', isCorrect: false },
+        { text: 'Sir Thomas Roe', isCorrect: false },
+        { text: 'Governor Dupleix', isCorrect: true },
+        { text: 'William Hawkins', isCorrect: false }
+      ]
+    },
+    {
+      id: 'q197',
+      question: 'Which European power was less significant in India compared to others?',
+      options: [
+        { text: 'British', isCorrect: false },
+        { text: 'Dutch', isCorrect: false },
+        { text: 'French', isCorrect: false },
+        { text: 'Swedish', isCorrect: true }
+      ]
+    },
+    {
+      id: 'q198',
+      question: 'Which European power established their second factory in Kannur in 1605 AD?',
+      options: [
+        { text: 'British', isCorrect: false },
+        { text: 'Dutch', isCorrect: true },
+        { text: 'French', isCorrect: false },
+        { text: 'Portuguese', isCorrect: false }
+      ]
+    },
+    {
+      id: 'q199',
+      question: 'Which European power established their headquarters in Cochin?',
+      options: [
+        { text: 'British', isCorrect: false },
+        { text: 'Dutch', isCorrect: false },
+        { text: 'French', isCorrect: false },
+        { text: 'Portuguese', isCorrect: true }
+      ]
+    },
+    {
+      id: 'q200',
+      question: 'Which European governor established Bombay as a key settlement?',
+      options: [
+        { text: 'Sir Thomas Roe', isCorrect: false },
+        { text: 'William Hawkins', isCorrect: false },
+        { text: 'Gerald Aungier', isCorrect: true },
+        { text: 'Governor Dupleix', isCorrect: false }
+      ]
+    }
+  ];
+  
+
+
+        // Function to shuffle an array using Fisher-Yates algorithm
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        // Function to render the questions dynamically
+        function renderQuestions() {
+            const quizForm = document.getElementById('quizForm');
+            const questionsArray = getQuestions(); // Retrieve the questions array
+            if (!questionsArray || !Array.isArray(questionsArray) || questionsArray.length < 25) {
+                quizForm.innerHTML = '<p>Insufficient questions available. Please ensure there are at least 25 questions in the questions array.</p>';
+                return;
+            }
+
+            // Randomly select 25 questions from the available questions
+            const selectedQuestions = getRandomQuestions(questionsArray, 25);
+
+            // Assign shuffledQuestions to the global variable
+            shuffledQuestions = shuffleArray([...selectedQuestions]); // Create a copy and shuffle
+
+            shuffledQuestions.forEach((q, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.classList.add('question');
+                questionDiv.id = `question-${index + 1}`; // Assign unique ID
+
+                // Question text
+                const questionText = document.createElement('p');
+                questionText.textContent = `${index + 1}. ${q.question}`;
+                questionDiv.appendChild(questionText);
+
+                // Options
+                const optionsDiv = document.createElement('div');
+                optionsDiv.classList.add('options');
+
+                // Shuffle options and assign back to q.options
+                q.options = shuffleArray([...q.options]);
+                const shuffledOptions = q.options;
+
+                // Assign labels A, B, C, D dynamically
+                const labels = ['A', 'B', 'C', 'D'];
+
+                shuffledOptions.forEach((option, optIndex) => {
+                    const optionId = `${q.id}_option${optIndex + 1}`; // Unique ID for each option
+
+                    const radioInput = document.createElement('input');
+                    radioInput.type = 'radio';
+                    radioInput.id = optionId;
+                    radioInput.name = q.id;
+                    radioInput.value = labels[optIndex]; // Assign label as value
+
+                    const label = document.createElement('label');
+                    label.htmlFor = optionId;
+                    label.textContent = `${labels[optIndex]}) ${option.text}`;
+
+                    optionsDiv.appendChild(radioInput);
+                    optionsDiv.appendChild(label);
+
+                    // Add Attempted Class when an option is selected
+                    radioInput.addEventListener('change', function() {
+                        const questionMapLink = document.querySelector(`.question-map .question-link[href="#question-${index + 1}"]`);
+                        if (questionMapLink && !questionMapLink.classList.contains('correct') && !questionMapLink.classList.contains('incorrect')) {
+                            questionMapLink.classList.add('attempted');
+                        }
+                    });
+                });
+
+                questionDiv.appendChild(optionsDiv);
+
+                // Add Feedback Div Below Options
+                const feedbackDiv = document.createElement('div');
+                feedbackDiv.classList.add('feedback');
+                feedbackDiv.id = `feedback-${index + 1}`; // Unique ID for each feedback div
+                questionDiv.appendChild(feedbackDiv);
+
+                quizForm.appendChild(questionDiv);
+            });
+
+            generateQuestionMap(shuffledQuestions.length);
+        }
+
+        // Function to retrieve the questions array
+        function getQuestions() {
+            // Replace this with your actual questions array
+            return questions; // Assuming 'questions' is defined globally
+        }
+
+        // Function to randomly select n questions from the questions array
+        function getRandomQuestions(questionsArray, n) {
+            const shuffled = shuffleArray([...questionsArray]);
+            return shuffled.slice(0, n);
+        }
+
+        // Function to generate the Question Map links
+        function generateQuestionMap(totalQuestions) {
+            const questionLinksDiv = document.getElementById('questionLinks');
+            questionLinksDiv.innerHTML = ''; // Clear any existing links
+
+            for (let i = 1; i <= totalQuestions; i++) {
+                const link = document.createElement('a');
+                link.href = `#question-${i}`;
+                link.classList.add('question-link');
+                link.textContent = `Q${i}`;
+
+                questionLinksDiv.appendChild(link);
+            }
+        }
+
+        // Timer Functionality
+        function startTimer(duration, display) {
+            let timer = duration, minutes, seconds;
+            const countdown = setInterval(function () {
+                minutes = parseInt(timer / 60, 10);
+                seconds = parseInt(timer % 60, 10);
+
+                minutes = minutes < 10 ? "0" + minutes : minutes;
+                seconds = seconds < 10 ? "0" + seconds : seconds;
+
+                display.textContent = minutes + ":" + seconds;
+
+                // Add alert class when time is less than 1 minute
+                if (timer <= 60 && timer > 0) { // 60 seconds = 1 minute
+                    display.classList.add('alert');
+                }
+
+                if (--timer < 0) {
+                    clearInterval(countdown);
+                    autoSubmit();
+                }
+            }, 1000);
+        }
+
+        // Function to automatically submit the quiz when time is up
+        function autoSubmit() {
+            alert("Time's up! The quiz will now be submitted.");
+            checkAnswers();
+        }
+
+        // Initialize the quiz on page load
+        window.onload = function () {
+            renderQuestions(); // Render questions on page load
+            const tenMinutes = 60 * 10, // 10 minutes in seconds
+                  display = document.getElementById('timer');
+            startTimer(tenMinutes, display);
+        };
+
+        // Function to check answers and display the result
+        function checkAnswers() {
+            let score = 0;
+            let totalQuestions = shuffledQuestions.length; // Total number of questions
+
+            shuffledQuestions.forEach((q, index) => { // Iterate over each question
+                const selectedOption = document.querySelector(`input[name="${q.id}"]:checked`);
+                const feedbackDiv = document.getElementById(`feedback-${index + 1}`);
+                
+                if (selectedOption) {
+                    // Get the selected label (A, B, C, D)
+                    const selectedLabel = selectedOption.value;
+                    // Map label to option index
+                    const labelIndex = ['A', 'B', 'C', 'D'].indexOf(selectedLabel);
+                    if (labelIndex !== -1 && q.options[labelIndex].isCorrect) {
+                        score += 1; // Add 1 mark for correct answer
+
+                        // Mark the question link as correct in the Question Map
+                        const questionMapLink = document.querySelector(`.question-map .question-link[href="#question-${index + 1}"]`);
+                        if (questionMapLink) {
+                            questionMapLink.classList.add('correct');
+                            questionMapLink.classList.remove('incorrect', 'attempted');
+                        }
+
+                        // Update Feedback Below the Question
+                        if (feedbackDiv) {
+                            feedbackDiv.textContent = 'Right';
+                            feedbackDiv.classList.add('right');
+                            feedbackDiv.classList.remove('wrong', 'not-attempted');
+                        }
+                    } else {
+                        score -= 0.5; // Deduct 0.5 marks for incorrect answer
+
+                        // Mark the question link as incorrect in the Question Map
+                        const questionMapLink = document.querySelector(`.question-map .question-link[href="#question-${index + 1}"]`);
+                        if (questionMapLink) {
+                            questionMapLink.classList.add('incorrect');
+                            questionMapLink.classList.remove('correct', 'attempted');
+                        }
+
+                        // Update Feedback Below the Question
+                        if (feedbackDiv) {
+                            feedbackDiv.textContent = 'Wrong';
+                            feedbackDiv.classList.add('wrong');
+                            feedbackDiv.classList.remove('right', 'not-attempted');
+                        }
+                    }
+                } else {
+                    // If the question was not answered, mark as not attempted
+                    const questionMapLink = document.querySelector(`.question-map .question-link[href="#question-${index + 1}"]`);
+                    if (questionMapLink) {
+                        // Remove both classes if the question was not answered
+                        questionMapLink.classList.remove('correct', 'incorrect', 'attempted');
+                    }
+
+                    // Update Feedback Below the Question
+                    if (feedbackDiv) {
+                        feedbackDiv.textContent = 'Not Attempted';
+                        feedbackDiv.classList.add('not-attempted');
+                        feedbackDiv.classList.remove('right', 'wrong');
+                    }
+                }
+            });
+
+            // Round the score to one decimal place
+            score = Math.round(score * 10) / 10;
+
+            // Update the result in the Question Map Sidebar
+            const resultDiv = document.getElementById('result');
+            resultDiv.textContent = `You scored ${score} out of ${totalQuestions}`;
+
+            // Update the result below the questions list
+            const resultDivBelow = document.getElementById('resultBelow');
+            resultDivBelow.textContent = `You scored ${score} out of ${totalQuestions}`;
+
+            // Disable all inputs to prevent changes after submission
+            const inputs = document.querySelectorAll('input[type="radio"]');
+            inputs.forEach(input => {
+                input.disabled = true;
+            });
+
+            // Disable the submit buttons to prevent multiple submissions
+            const submitButton = document.getElementById('submitBtn');
+            submitButton.disabled = true;
+
+            const submitButtonBelow = document.getElementById('submitBtnBelow');
+            if (submitButtonBelow) {
+                submitButtonBelow.disabled = true;
+            }
+        }
+
+        // Toggle Question Map on small screens
+        const toggleBtn = document.getElementById('toggleQuestionMap');
+        const questionMap = document.getElementById('questionMap');
+
+        toggleBtn.addEventListener('click', () => {
+            questionMap.classList.toggle('active');
+        });
+    </script>
+</body>
+</html>
